@@ -1,0 +1,8 @@
+eltset / erefine / delete
+cmo / DELATT / mo_hex / if_inter
+
+intersect_elements / MO_REFINE / MO_OBJECT / if_inter
+eltset / erefine / if_inter / gt / 0
+refine / eltset / eltset get erefine 
+
+finish

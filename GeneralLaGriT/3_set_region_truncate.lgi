@@ -1,0 +1,78 @@
+read / avs / 2_hexRefine_octree.inp / domain_hex
+
+read / avs / 1_surface.inp / mo_surface
+read / avs / 1_surface_aq200.inp / mo_aq200
+read / avs / 1_surface_aq800.inp / mo_aq800
+read / avs / 1_surface_zero.inp / mo_zero
+
+surface / surf / reflect / sheet / mo_surface
+surface / s_aq200 /reflect / sheet / mo_aq200
+surface / s_aq800 /reflect / sheet / mo_aq800
+surface / zero / reflect / sheet / mo_zero
+
+cmo / select / domain_hex
+cmo / setatt / domain_hex / itetclr / 1 0 0 / 5
+
+# Intersect elements with mesh objects to get "thickest" possible aq layers.
+intersect_elements / mo_aq800 / domain_hex / if_inter
+eltset / r5_int / if_inter / gt / 0
+cmo / setatt / domain_hex / itetclr / eltset get r5_int / 3
+
+cmo / select / domain_hex
+
+region / r1 / le zero and gt surf
+eltset / e_r1 / region / r1
+cmo / setatt / domain_hex / itetclr / eltset get e_r1 / 1
+
+region / r2 / le surf and gt s_aq200
+eltset / e_r2 / region / r2
+cmo / setatt / domain_hex / itetclr / eltset get e_r2 / 2
+
+region / r3 / le s_aq200 and gt s_aq800
+eltset / e_r3 / region / r3
+cmo / setatt / domain_hex / itetclr / eltset get e_r3 / 3
+
+region / r4 / lt s_aq800
+eltset / e_r4 / region / r4
+cmo / setatt / domain_hex / itetclr / eltset get e_r4 / 4
+
+cmo /select/domain_hex
+cmo / status / brief
+quality
+
+# Convert refined octree grid to clean octree grid
+grid2grid / tree_to_fe / domain_hex_temp / domain_hex
+
+# Create tet grid
+cmo / create / domain_tet / / / tet
+copypts / domain_tet / domain_hex
+
+# Reset attributes
+cmo / setatt / domain_tet / imt / 1 0 0 / 1
+cmo / setatt / domain_tet / itp / 1 0 0 / 0
+connect
+
+# Interpolate cell colors (itetclr) from hex mesh to tet mesh cells.
+cmo / setatt / domain_tet / itetclr / 1 0 0 / 8
+interpolate / map / domain_tet / itetclr / 1 0 0 / domain_hex / itetclr
+
+# Remove top of domain
+rmmat / 5
+rmpoint / compress
+
+# Set vertex colors (imt) from cell color (itetclr)
+resetpts / cell_color
+resetpts / itp
+cmo / status / brief
+quality
+
+# reset top node imt
+cmo / select / domain_tet
+pset / domain_all / attribute / imt / 1,0,0 / gt 1
+pset/ domain_top / attribute / top / 1,0,0 / eq 1
+pset / domain_com / inter / domain_all,domain_top
+cmo / setatt / domain_tet / imt / pset,get,domain_com / 2
+
+
+dump / avs / 3_hexDomain_regionSet.inp / domain_tet
+finish

@@ -1,0 +1,57 @@
+define / X0 / -5000
+define / Y0 / -5000
+define / X1 / 5000
+define / Y1 / 5000
+define / NX / 201
+define / NY / 201
+
+
+cmo / create / mo_surface / / / triplane
+createpts / xyz / NX NY 1 / X0 Y0 0.0 / X1 Y1 0.0 / 1 1 1
+connect
+cmo / status / brief
+quality
+
+
+# Create object and read in xyz surface points
+cmo / create / surface_plane / / / triplane
+cmo / readatt / surface_plane / xic,yic,zic / 1,0,0 / surface
+
+# Copy over z coords from surface to connected points above
+cmo / copyatt / mo_surface / surface_plane / zic / zic
+
+# Reset property values
+cmo / setatt / mo_surface / itetclr / 1 0 0 / 1
+cmo / setatt / mo_surface / itm / 1 0 0 / 1
+cmo / setatt / mo_surface / itp / 1 0 0 / 1
+
+# Dump surface
+dump / avs / 1_surface.inp / mo_surface
+
+
+# Create surfaces to refine
+cmo / copy / mo_aq200 / mo_surface
+cmo / copy / mo_aq800 / mo_surface
+
+math / add / mo_aq200 / zic / 1 0 0 / mo_aq200 / zic / -2.e2
+math / add / mo_aq800 / zic / 1 0 0 / mo_aq800 / zic / -8.e2
+cmo / status / brief
+quality
+
+dump / avs / 1_surface_aq200.inp / mo_aq200
+dump / avs / 1_surface_aq800.inp / mo_aq800
+
+
+# Create surface at zero
+define / NX / 2
+define / NY / 2
+
+cmo / create / mo_zero / / / triplane
+createpts / xyz / NX NY 1 / X0 Y0 0.0 / X1 Y1 0.0 / 1 1 1
+connect
+cmo / status / brief
+quality
+
+# Dump zero surface
+dump / avs / 1_surface_zero.inp / mo_zero
+finish

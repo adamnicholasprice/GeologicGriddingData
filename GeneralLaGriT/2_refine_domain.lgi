@@ -1,0 +1,46 @@
+# Define numerical grid
+define / X0 / -5.e3
+define / Y0 / -5.e3
+define / Z0 / -4.e3
+define / X1 / 5.e3
+define / Y1 / 5.e3
+define / Z1 / 1.e3
+define / NX / 11
+define / NY / 11
+define / NZ /  6
+
+cmo / create / domain_hex / / / hex
+createpts / brick / xyz / NX NY NZ / X0 Y0 Z0 / X1 Y1 Z1 / 1 1 1
+dump / avs / 2_initial_domain.inp / domain_hex
+
+read / avs / 1_surface.inp / mo_surface
+read / avs / 1_surface_aq200.inp / mo_aq200
+read / avs / 1_surface_aq800.inp / mo_aq800
+
+
+
+# Refine on top surface
+define / MO_REFINE / domain_hex
+define / MO_OBJECT / mo_surface
+infile / refine_object.mlgi
+dump / avs / 2_surface_octree.inp / MO_REFINE
+cmo / status / brief
+
+# Refine on aq200
+define / MO_OBJECT / mo_aq200
+infile / refine_object.mlgi
+infile / refine_object.mlgi
+dump / avs / 2_surfaceAQ200_octree.inp / MO_REFINE
+cmo / status / brief
+
+# Refine on aq800
+define / MO_OBJECT / aq300_1k
+infile / refine_object.mlgi
+dump / avs / 2_surfaceAQ800_octree.inp / MO_REFINE
+cmo / status / brief
+
+# Reset cell material
+cmo / setatt / domain_hex / itetclr / 1 0 0 / 7
+dump / avs / 2_hexRefine_octree.inp / domain_hex
+
+finish
