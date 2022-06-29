@@ -1,0 +1,75 @@
+read / avs / 8_hex_refine_octree.inp / mo_hex
+
+read / avs / 1_surf_domain.inp / domain
+read / avs / 4_surf_flat_zero.inp / sf_zero
+read / avs / 7_surf_filt_aq100.inp / mo_aq100
+read / avs / 7_surf_filt_aq300.inp / mo_aq300
+read / avs / 7_surf_filt_aq600.inp / mo_aq600
+read / avs / 7_surf_filt_aq1k.inp / mo_aq1k
+read / avs / 3_surf_mid_sb.inp / mo_sb
+read / avs / 9_surf_north_pond_seafloor.inp / np_sea
+
+surface / dom / reflect / sheet / domain
+surface / zero / reflect / sheet / sf_zero
+surface / s_aq100 /reflect / sheet / mo_aq100
+surface / s_aq300 /reflect / sheet / mo_aq300
+surface / s_aq600/reflect / sheet / mo_aq600
+surface / s_aq1k /reflect / sheet / mo_aq1k
+surface/ s_sb / reflect / sheet / mo_sb
+surface / sea / reflect / sheet  / np_sea
+
+
+cmo /select/mo_hex
+
+cmo / setatt / mo_hex / itetclr / 1 0 0 / 7
+
+# Intersect elements with mesh objects to get "thickest" possible aq layers.
+intersect_elements / mo_aq1k / mo_hex / if_inter
+eltset / r5_int / if_inter / gt / 0
+cmo / setatt / mo_hex / itetclr / eltset get r5_int / 5
+
+cmo /select/mo_hex
+
+region / r1 / le zero and gt s_sb
+eltset / e_r1 / region / r1
+cmo / setatt / mo_hex / itetclr / eltset get e_r1 / 1
+
+region / r2 / le dom and ge s_aq100
+eltset / e_r2 / region / r2
+cmo / setatt / mo_hex / itetclr / eltset get e_r2 / 2
+
+region / r3 / lt s_aq100 and ge s_aq300
+eltset / e_r3 / region / r3
+cmo / setatt / mo_hex / itetclr / eltset get e_r3 / 3
+
+region / r4 / le s_aq300 and ge s_aq600
+eltset / e_r4 / region / r4
+cmo / setatt / mo_hex / itetclr / eltset get e_r4 / 4
+
+region / r5 / lt s_aq600 and ge s_aq1k
+eltset / e_r5 / region / r5
+cmo / setatt / mo_hex / itetclr / eltset get e_r5 / 5
+
+region / r6 / lt s_aq1k
+eltset / e_r6 / region / r6
+cmo / setatt / mo_hex / itetclr / eltset get e_r6 / 6
+
+cmo /select/mo_hex
+
+
+# Intersect the elements of the seafloor above north pond
+
+region / r7 / le zero
+eltset / e_r7 / region / r7
+intersect_elements / mo_hex / sea / if_inter
+eltset / sf / if_inter / gt / 0
+eltset / combined / inter / sf, e_r7
+cmo / setatt / mo_hex / itetclr / eltset get combined / 1
+
+cmo / status / brief
+quality
+
+dump / avs / 10_hex_refine_octree_pre.inp / mo_hex
+dump / avs / 10_hex_refine_octree.inp / mo_hex
+
+finish

@@ -1,0 +1,35 @@
+#
+read / avs / 2_surf_mid_grid.inp / mo
+
+
+cmo / copy / mo_aq100 / mo
+cmo / copy / mo_aq300 / mo
+cmo / copy / mo_aq600 / mo
+cmo / copy / mo_aq1k / mo
+
+cmo / status / brief
+quality
+
+math / add / mo_aq100 / zic / 1 0 0 / mo_aq100 / zic / -1.e2
+extrude / mo_aq100long / mo_aq100 / const / 1.e2 / bubble
+
+math / add / mo_aq300 / zic / 1 0 0 / mo_aq300 / zic / -3.e2
+extrude / mo_aq300long / mo_aq300 / const / 2.e2 / bubble
+
+
+math / add / mo_aq600 / zic / 1 0 0 / mo_aq600 / zic / -6.e2
+extrude / mo_aq600long / mo_aq600 / const / 3.e2 / bubble
+
+math / add / mo_aq1k / zic / 1 0 0 / mo_aq1k / zic / -1.e3
+extrude / mo_aq1klong / mo_aq1k / const / 4.e2 / bubble
+
+
+cmo / status / brief
+quality
+
+dump / avs / 13_surf_filt_mid_grid_aq100.inp / mo_aq100long
+dump / avs / 13_surf_filt_mid_grid_aq300.inp / mo_aq300long
+dump / avs / 13_surf_filt_mid_grid_aq600.inp / mo_aq600long
+dump / avs / 13_surf_filt_mid_grid_aq1k.inp / mo_aq1klong
+
+finish

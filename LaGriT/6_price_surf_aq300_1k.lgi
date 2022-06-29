@@ -1,0 +1,17 @@
+#
+read / avs / 2_surf_mid_grid.inp / mo
+
+math / add / mo / zic / 1 0 0 / mo / zic / -1.e2
+
+extrude / mo_long / mo / const / -9.e2 / volume
+
+cmo /status/brief
+
+hextotet / 3 / mo_tet / mo_long
+
+cmo /status/brief
+quality
+
+dump / avs / 6_surf_aq300_1k.inp / mo_tet
+
+finish

@@ -1,0 +1,15 @@
+read / avs / 3_surf_mid_sb.inp / mid_sb
+
+
+extrude / mo_long / mid_sb / const / -100 / volume
+
+cmo / status / brief
+
+
+hextotet / 3 / mo_tet / mo_long
+
+quality
+
+dump / avs / 5_surf_aq100.inp / mo_tet
+
+finish

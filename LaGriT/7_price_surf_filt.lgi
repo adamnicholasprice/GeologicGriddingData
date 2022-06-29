@@ -1,0 +1,25 @@
+#
+read / avs / 1_surf_domain.inp / mo
+
+cmo / copy / mo_aq100 / mo
+cmo / copy / mo_aq300 / mo
+cmo / copy / mo_aq600 / mo
+cmo / copy / mo_aq1k / mo
+
+cmo / status / brief
+quality
+
+math / add / mo_aq100 / zic / 1 0 0 / mo_aq100 / zic / -1.e2
+math / add / mo_aq300 / zic / 1 0 0 / mo_aq300 / zic / -3.e2
+math / add / mo_aq600 / zic / 1 0 0 / mo_aq600 / zic / -6.e2
+math / add / mo_aq1k / zic / 1 0 0 / mo_aq1k / zic / -1.e3
+
+cmo / status / brief
+quality
+
+dump / avs / 7_surf_filt_aq100.inp / mo_aq100
+dump / avs / 7_surf_filt_aq300.inp / mo_aq300
+dump / avs / 7_surf_filt_aq600.inp / mo_aq600
+dump / avs / 7_surf_filt_aq1k.inp / mo_aq1k
+
+finish

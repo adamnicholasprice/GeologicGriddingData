@@ -1,0 +1,34 @@
+read / avs / 10_hex_refine_octree.inp / mo_octree
+grid2grid / tree_to_fe / mo_hex
+
+quality
+
+dump / avs / 11_tmp_hex_mesh.inp / mo_hex
+
+cmo / create / mo_tet / / / tet
+copypts / mo_tet / mo_hex
+
+cmo / setatt / mo_tet / imt / 1 0 0 / 1
+cmo / setatt / mo_tet / itp / 1 0 0 / 0
+
+connect
+
+# Interpolate cell colors (itetclr) from hex mesh to tet mesh cells.
+
+cmo / setatt / mo_tet / itetclr / 1 0 0 / 8
+interpolate / map / mo_tet / itetclr / 1 0 0 / mo_hex / itetclr
+
+rmmat / 7
+rmpoint / compress
+
+# Set vertex colors (imt) from cell color (itetclr)
+
+resetpts / cell_color
+resetpts / itp
+
+cmo / status / brief
+quality
+
+dump / avs / 11_tmp_tet_interp.inp / mo_tet
+
+finish

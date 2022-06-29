@@ -1,0 +1,41 @@
+#
+define / X0 / -30000
+define / Y0 / -75000
+define / Z0 / -5.e3
+define / X1 / 30000
+define / Y1 / 75000
+define / Z1 / 0.0
+
+define / NX / 301
+define / NY / 301
+define / NZ /  6
+
+
+cmo / create / mo_tri / / / triplane
+createpts / xyz / NX NY 1 / X0 Y0 0.0 / X1 Y1 0.0 / 1 1 1
+connect
+cmo / status / brief
+quality
+
+
+# Create object and read in xyz surface points
+
+cmo / create / sedbase / / / triplane
+cmo / readatt / sedbase / xic,yic,zic / 1,0,0 / function6
+
+
+# Copy over z coords from surface to connected points above
+cmo / copyatt / mo_tri / sedbase / zic / zic
+
+
+# Reset prop values (per CG)
+cmo / setatt / mo_tri / itetclr / 1 0 0 / 1
+cmo / setatt / mo_tri / itm / 1 0 0 / 1
+
+
+# Reset to filter per AP
+cmo / setatt / mo_tri / itp / 1 0 0 / 1
+
+dump / avs / 1_surf_domain.inp / mo_tri
+
+finish

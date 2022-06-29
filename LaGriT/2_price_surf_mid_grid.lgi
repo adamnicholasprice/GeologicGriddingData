@@ -1,0 +1,28 @@
+####
+
+# Create object and read in xyz surface points
+cmo / create / sedbase / / / triplane
+cmo / readatt / sedbase / xic,yic,zic / 1,0,0 / 2_middle_grid.csv
+cmo / setatt / sedbase / zic / 1 0 0 / 0.0
+
+connect
+
+cmo / create / temp / / / triplane
+cmo / readatt / temp / xic,yic,zic / 1,0,0 / 2_middle_grid.csv
+
+# Copy over z coords from surface to connected points above
+cmo / copyatt / sedbase / temp / zic / zic
+
+
+# Reset prop values (per CG)
+cmo / setatt / sedbase / itetclr / 1 0 0 / 1
+cmo / setatt / sedbase / itm / 1 0 0 / 1
+
+# Reset to filter per AP
+cmo / setatt / sedbase / itp / 1 0 0 / 1
+
+
+# Dump the grid
+dump / avs / 2_surf_mid_grid.inp / sedbase
+
+finish

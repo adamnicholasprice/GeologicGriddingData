@@ -1,0 +1,151 @@
+#
+define / X0 / -2.4e4
+define / Y0 / -4.e4
+define / Z0 / -6.e3
+define / X1 / 1.6e4
+define / Y1 / 5.5e4
+define / Z1 / 1.5e3
+
+define / NX / 41
+define / NY / 96
+define / NZ / 11
+
+cmo / create / mo_hex / / / hex
+createpts / brick / xyz / NX NY NZ / X0 Y0 Z0 / X1 Y1 Z1 / 1 1 1
+
+
+read / avs / 1_surf_domain.inp / domain
+read / avs / 4_surf_flat_zero.inp / sf_zero
+read / avs / 5_surf_aq100.inp / aq100
+read / avs / 6_surf_aq300_1k.inp /aq300_1k
+read / avs / 3_surf_mid_sb.inp / mo_sb
+read / avs / 7_surf_filt_aq100.inp / domain_aq100
+read / avs / 7_surf_filt_aq1k.inp / domain_aq1k
+read / avs / 7_surf_filt_aq600.inp / domain_aq600
+read / avs / 7_surf_filt_aq300.inp / domain_aq300
+
+
+define / MO_REFINE / mo_hex
+
+# Refine on North Pond / Sediment Basement
+
+define / MO_OBJECT / mo_sb
+infile / refine_object.mlgi
+dump / avs / 8_1_octree_NP.inp / MO_REFINE
+
+cmo / status / brief
+
+# Refine on aq100
+
+define / MO_OBJECT / aq100
+infile / refine_object.mlgi
+dump / avs / 8_2_octree_aq100.inp / MO_REFINE
+cmo / status / brief
+
+# Refine on aq300_1k
+
+define / MO_OBJECT / aq300_1k
+infile / refine_object.mlgi
+infile / refine_object.mlgi
+dump / avs / 8_3_octree_aq300.inp / MO_REFINE
+
+cmo / status / brief
+
+# Refine on full domain
+
+
+define / MO_OBJECT / domain
+infile / refine_object.mlgi
+infile / refine_object.mlgi
+dump / avs / 8_4_octree_dom.inp / MO_REFINE
+
+# Refine on full domain
+
+define / MO_OBJECT / domain_aq100
+eltset / erefine / delete
+cmo / DELATT / mo_hex / if_inter
+
+intersect_elements / MO_REFINE / MO_OBJECT / if_inter
+eltset / erefine1 / if_inter / gt / 0
+eltset / num_ref1 / itetlev / lt / 2
+eltset / combined1 / inter / num_ref1,erefine1
+refine / eltset / eltset get combined1
+
+
+dump / avs / 8_4_octree_domaq100.inp / MO_REFINE
+
+# Refine on aq1k and cond basment top
+
+define / MO_OBJECT / domain_aq1k
+eltset / erefine / delete
+cmo / DELATT / mo_hex / if_inter
+
+intersect_elements / MO_REFINE / MO_OBJECT / if_inter
+eltset / erefine2 / if_inter / gt / 0
+eltset / num_ref2 / itetlev / lt / 2
+eltset / combined2 / inter / num_ref2,erefine2
+refine / eltset / eltset get combined2
+
+dump / avs / 8_5_octree_domaq1k.inp / MO_REFINE
+
+cmo / status / brief
+
+
+# Refine on aq300
+
+define / MO_OBJECT / domain_aq300
+eltset / erefine / delete
+cmo / DELATT / mo_hex / if_inter
+
+intersect_elements / MO_REFINE / MO_OBJECT / if_inter
+eltset / erefine4 / if_inter / gt / 0
+eltset / num_ref4 / itetlev / lt / 2
+eltset / combined4 / inter / num_ref4,erefine4
+refine / eltset / eltset get combined4
+
+dump / avs / 8_6_octree_domaq300.inp / MO_REFINE
+
+cmo / status / brief
+
+# Refine on aq600
+
+define / MO_OBJECT / domain_aq600
+eltset / erefine / delete
+cmo / DELATT / mo_hex / if_inter
+
+intersect_elements / MO_REFINE / MO_OBJECT / if_inter
+eltset / erefine3 / if_inter / gt / 0
+eltset / num_ref3 / itetlev / lt / 2
+eltset / combined3 / inter / num_ref3,erefine3
+refine / eltset / eltset get combined3
+
+dump / avs / 8_7_octree_domaq600.inp / MO_REFINE
+
+cmo / status / brief
+
+# Refine on midpond area elements that are refined less than specified value
+
+read / avs / 2_surf_mid_grid.inp / mid_grid
+define / MO_OBJECT / mid_grid
+
+eltset / erefine / delete
+cmo / DELATT / mo_hex / if_inter
+
+intersect_elements / MO_REFINE / MO_OBJECT / if_inter
+eltset / erefine / if_inter / gt / 0
+eltset / num_ref / itetlev / lt / 4
+eltset / combined / inter / num_ref,erefine
+refine / eltset / eltset get combined
+
+cmo / status / brief
+
+quality
+
+cmo / setatt / mo_hex / itetclr / 1 0 0 / 7
+
+dump / avs / 8_hex_refine_octree.inp / mo_hex
+
+cmo / status / brief
+quality
+
+finish

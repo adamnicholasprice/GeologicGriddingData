@@ -1,0 +1,46 @@
+read / avs / 12_tet_reset_final.inp / mo
+
+
+read / avs / 13_surf_filt_mid_grid_aq100.inp / mo_aq100b
+read / avs / 13_surf_filt_mid_grid_aq300.inp / mo_aq300b
+read / avs / 13_surf_filt_mid_grid_aq600.inp / mo_aq600b
+read / avs / 13_surf_filt_mid_grid_aq1k.inp / mo_aq1kb
+
+
+surface / aq100 / reflect / sheet / mo_aq100b
+surface / aq300/ reflect / sheet / mo_aq300b
+surface / aq600/ reflect / sheet / mo_aq600b
+surface / aq1k/ reflect / sheet / mo_aq1kb
+
+
+cmo / select / mo
+
+
+region / r11 / le aq100
+pset / e_r11 / region / r11
+cmo / setatt / mo / imt / pset get e_r11 / 7
+
+region / r12 / lt aq300
+pset / e_r12 / region / r12
+cmo / setatt / mo / imt / pset get e_r12 / 8
+
+region / r13 / lt aq600
+pset / e_r13 / region / r13
+cmo / setatt / mo / imt / pset get e_r13 / 9
+
+region / r14 / le aq1k
+pset / e_r14 / region / r14
+cmo / setatt / mo / imt / pset get e_r14 / 10
+
+
+# Reset top again
+pset / todos / attribute / imt / 1,0,0 / gt 1
+pset/ttop/attribute/top/1,0,0/eq 1
+pset / filter / inter / todos,ttop
+cmo / setatt / mo / imt / pset,get,filter / 2
+
+
+dump / avs / 14_tet_reset_final.inp / mo
+dump / gmv / 14_tet_reset_final.gmv / mo
+dump / fehm / final_mesh / mo
+finish

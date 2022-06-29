@@ -1,0 +1,21 @@
+####
+
+# Create object and read in xyz surface points
+cmo / create / sedbase / / / triplane
+cmo / readatt / sedbase / xic,yic,zic / 1,0,0 / 3_middle_sb.csv
+cmo / setatt / sedbase / zic / 1 0 0 / 0.0
+
+connect
+
+# Reset prop values (per CG)
+cmo / setatt / sedbase / itetclr / 1 0 0 / 1
+cmo / setatt / sedbase / itm / 1 0 0 / 1
+
+# Reset to filter per AP
+cmo / setatt / sedbase / itp / 1 0 0 / 1
+
+
+# Dump the grid
+dump / avs / 9_surf_north_pond_seafloor.inp / sedbase
+
+finish

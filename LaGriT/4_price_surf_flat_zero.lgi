@@ -1,0 +1,22 @@
+#
+define / X0 / -1.5e4
+define / Y0 / -6.e3
+define / X1 / 4.6e3
+define / Y1 / 2.85e4
+
+define / NX / 2
+define / NY / 2
+
+
+cmo / create / mo_tri / / / triplane
+
+createpts / xyz / NX NY 1 / X0 Y0 0.0 / X1 Y1 0.0 / 1 1 1
+
+connect
+
+cmo / status / brief
+quality
+
+dump / avs / 4_surf_flat_zero.inp / mo_tri
+
+finish

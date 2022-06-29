@@ -1,0 +1,24 @@
+read / avs / 11_tmp_tet_interp.inp / mo
+
+cmo / status / brief
+cmo / status
+
+dump / zone_outside / tmp_test / mo / keepatt
+
+cmo/set_id/mo/node/node_num
+cmo / status / brief
+
+pset / todos / attribute / imt / 1,0,0 / gt 1
+pset/ttop/attribute/top/1,0,0/eq 1
+pset / filter / inter / todos,ttop
+cmo / setatt / mo / imt / pset,get,filter / 2
+
+cmo / status / brief
+quality
+
+sort / mo / rank / ascending / node_sort / nnondes
+sort / mo / index / ascending / node_sort2 / xic yic zic
+reorder / mo / node_sort2
+
+dump / avs / 12_tet_reset_final.inp / mo
+finish
